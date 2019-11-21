@@ -1,0 +1,49 @@
+{
+  "object": "page",
+  "entry": [
+    {
+      "id": "100744591392901",
+      "time": 1573445022219,
+      "messaging": [
+        {
+          "sender": {
+            "id": "2820890451256873"
+          },
+          "recipient": {
+            "id": "100744591392901"
+          },
+          "timestamp": 1573445021773,
+          "message": {
+            "mid": "m_efj7oWYexRG70uEORvbdghItwBn9PKmMCPxlYgGmpqx-q5Js20a6EfK1yDDYTu98lhVQ1DM9nkSjVNBsdgT5-w",
+            "text": "Tôi muốn đặt lịch khám ngày mai",
+            "nlp": {
+              "entities": {
+                "datetime": [
+                  {
+                    "confidence": 1,
+                    "values": [
+                      {
+                        "value": "2019-11-12T00:00:00.000+07:00",
+                        "grain": "day",
+                        "type": "value"
+                      }
+                    ],
+                    "value": "2019-11-12T00:00:00.000+07:00",
+                    "grain": "day",
+                    "type": "value"
+                  }
+                ]
+              },
+              "detected_locales": [
+                {
+                  "locale": "vi_VN",
+                  "confidence": 1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
