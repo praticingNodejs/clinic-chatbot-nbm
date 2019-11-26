@@ -1,4 +1,4 @@
-const {sequelize, Sequelize} = require('../databases/index');
+const { sequelize, Sequelize } = require('../databases/index');
 
 const Book = sequelize.define('books', {
     id: {
@@ -10,15 +10,28 @@ const Book = sequelize.define('books', {
     status: {
         type: Sequelize.STRING,
         defaultValue: 'pending',
-        values: ['pending', 'verified'],
+        values: ['pending', 'verified','canceled'],
         field: 'status'
     },
-    bookDate: {
+    time: {
+        type: Sequelize.INTEGER,
+        field: 'time'
+    },
+    date: {
         type: Sequelize.DATE,
-        allowNull: false
+        field: 'date'
+    },
+    reason: {
+        type: Sequelize.STRING,
+        field: 'reason'
+    },
+    userId:{
+        type:Sequelize.INTEGER,
+        field:'user_id'
     }
 }, {
     timestamps: false,
-    underscored: false,
-    tableName: 'books'
+    underscored: false
 });
+
+module.exports = Book;

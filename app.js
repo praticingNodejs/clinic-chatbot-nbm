@@ -3,13 +3,17 @@ let express = require('express');
 let path = require('path');
 require('dotenv').config();
 let logger = require('morgan');
+let passport = require('passport');
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
+let loginRouter = require('./routes/login');
+let authRouter = require('./routes/auth');
 
+require('./middlewares/passportSetup')(passport);
 let app = express();
 
 
-// view engine setup
+// view engine configs
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -21,9 +25,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-require('./api/webhook')(app);
-require('./api/user')(app);
+app.use('/login', loginRouter);
+app.use('/auth',authRouter);
+require('./api/facebook')(app);
+require('./api/zalo')(app);
+require('./api/users')(app);
+require('./api/data')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

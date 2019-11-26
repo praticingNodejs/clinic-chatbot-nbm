@@ -1,6 +1,6 @@
-let sendButtonsTemplateFacebook = require('../sendButtonsTemplateFacebook');
+let sendButtonsTemplateFacebook = require('../process/sendButtonsTemplateFacebook');
 let buttonTemplateFacecbook = require('../templates/buttonTemplateFacebook');
-module.exports = async (user_id,text) =>{
+module.exports = async (page_id,user_id,text) =>{
     let buttons = [
     ];
     if (text === 'test'){
@@ -8,6 +8,6 @@ module.exports = async (user_id,text) =>{
         buttons.push(buttonTemplateFacecbook("postback","Đặt lịch",{'category':'book'}));
         buttons.push(buttonTemplateFacecbook("postback","Tư vấn",{'category':'assistant'}));
         console.log(buttons);
-        await sendButtonsTemplateFacebook(process.env.FB_ACCESS_TOKEN,user_id,'Phòng khám',buttons);
+        await sendButtonsTemplateFacebook(page_id,user_id,'Phòng khám',buttons);
     }
 };

@@ -1,48 +1,46 @@
-const {sequelize, Sequelize} = require('../databases/index');
+const { sequelize, Sequelize } = require('../databases/index');
 
-const User= sequelize.define('users', {
+const User = sequelize.define('users', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-
+        field: 'id'
     },
     provider: {
         type: Sequelize.STRING,
+        field: 'provider'
     },
-    name: {
+    fullName: {
         type: Sequelize.STRING,
-
+        field: 'full_name'
     },
-
-    dateOfBirth: {
-        type: Sequelize.DATE,
-
+    birthYear: {
+        type: Sequelize.INTEGER,
+        field: 'birth_year'
     },
     sex: {
         type: Sequelize.STRING,
-
+        field: 'sex'
     },
     phone: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         validate: {
             is: /(09|01[2|6|8|9])+([0-9]{8})\b/g
         },
         field: 'phone'
     },
-    email: {
-        type: Sequelize.STRING,
-        validate: {
-            is: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g
-        }
-    },
     address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'address'
+    },
+    idByProvider: {
+        type: Sequelize.INTEGER,
+        field: 'id_by_provider'
     }
 }, {
     timestamps: false,
-    underscored: false,
-    tableName: 'users'
+    underscored: false
 });
 
 module.exports = User;

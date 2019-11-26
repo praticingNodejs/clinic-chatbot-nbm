@@ -1,7 +1,9 @@
 let handleTextFacebook = require('../flatforms/facebook/handles/handleTextFacebook');
 let handlePostbackFacebook = require('../flatforms/facebook/handles/handlePostbackFacebook');
+let getCustomerAccessTokenFacebook = require('../flatforms/facebook/process/getCustomerAccessTokenFacebook');
 module.exports = {
-    get: (req,res,next)=>{
+    getWebhook: (req,res,next)=>{
+        console.log(JSON.stringify(req.body));
         let VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
         let mode = req.query['hub.mode'];
         let token = req.query['hub.verify_token'];
@@ -17,7 +19,7 @@ module.exports = {
             res.sendStatus(403);
         }
     },
-    post: async ( req,res,next) =>{
+    postWebhook: async ( req,res,next) =>{
         console.log(JSON.stringify(req.body));
         try{
             let body = req.body;
@@ -58,5 +60,23 @@ module.exports = {
                 message:'ok'
             }).status(200);
         }
+    },
+    getCallback:async (req,res,next)=>{
+        let code = req.query.code;
+        await getCustomerAccessTokenFacebook(code).then((result)=>{
+            console.log(result);
+            res.json({
+                access_token:result
+            });
+        }).catch((error)=>{
+            console.log(error);
+            res.json(error);
+        });
+    },
+    postCallback:(req,res,next)=>{
+        console.log(req.query.code);
+        res.json({
+            success:true
+        });
     }
 };

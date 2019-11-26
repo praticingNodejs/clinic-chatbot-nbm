@@ -6,7 +6,7 @@ const sequelize = new Sequelize(process.env.PG_DATABASE, process.env.PG_USERNAME
     dialectOptions: {
         ssl: true
     }
-});
+})
 
-module.exports.Op = sequelize.Op;
-module.exports = { sequelize, Sequelize };
+module.exports.Op = sequelize.Op
+module.exports = { sequelize, Sequelize }

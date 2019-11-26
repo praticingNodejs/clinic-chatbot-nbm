@@ -1,23 +1,26 @@
 const { sequelize, Sequelize } = require('../databases/index');
-
-const TemplateSet = sequelize.define('template_sets', {
+const Session = sequelize.define('sessions', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         field: 'id'
     },
-    questionList: {
-        type: Sequelize.STRING,
-        field: 'question_list'
+    userId: {
+        type: Sequelize.INTEGER,
+        field: 'user_id'
     },
-    category: {
+    templateId: {
+        type: Sequelize.INTEGER,
+        field: 'template_id'
+    },
+    question: {
         type: Sequelize.STRING,
-        field: 'category'
+        field: 'question'
     }
 }, {
     timestamps: false,
     underscored: false
 })
 
-module.exports = TemplateSet
+module.exports = Session

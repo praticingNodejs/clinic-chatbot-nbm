@@ -1,0 +1,6 @@
+https://oauth.zaloapp.com/v3/oa/permission?app_id=<APP_ID>&redirect_uri=<OFFICIAL_ACOUNT_CALLBACKURL>
+
+https://yourdomain.com/abc?access_token=an-awesome-access-token&oaId=11223344556677
+
+
+https://5c512d15.ngrok.io/api/zalo/callback?access_token=tC6T7LpGgJ3Mp9iPLTUkFT3AcXPMpELfqA2PFW7A-sxRXxmSMftpHhhditTSj_mgdz69NnsfwtIUv9HRIu3h2R36fs5cX-CeZjsjKbcdxH-Ep8raNSdnFw2uhcq_slT3-QAuF0xlzN38fh0_2_lvOe29ZWiBpUPQze6N4HtsysxOfiGVDRgGHy__rnqkhRmvsx7HK0B-jZw5x-HCUlA5Q8Q5pZvuvuToXBtaGqVyjYsV-UfqMhMr6h-eYZDkpUvxiuAYAdFy_NlnXhDIB9lJ1KUoA0OSNSUgCW&oaId=3861154206582011756

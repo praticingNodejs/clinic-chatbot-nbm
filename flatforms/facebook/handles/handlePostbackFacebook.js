@@ -1,5 +1,5 @@
-let sendTextFacebook = require('../sendTextFacebook');
-module.exports =async (user_id,payload)=> {
+let sendTextFacebook = require('../process/sendTextFacebook');
+module.exports =async (page_id,user_id,payload)=> {
     let category = payload.category;
     switch (category) {
         case 'bookSchedule':{
