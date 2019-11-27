@@ -38,7 +38,7 @@ module.exports = {
             if (message){
                 if (message.text !== null && message.text !== undefined) {
                     let text = message.text;
-                    await handleTextFacebook(sender_id, text);
+                    await handleTextFacebook(id,sender_id, text);
                 }else if (message.attachments !== null && message.attachments !== undefined){
                     let attachments = message.attachments;
                 }

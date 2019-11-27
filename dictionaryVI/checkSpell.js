@@ -1,11 +1,12 @@
-const fs = require('fs');
-const SpellChecker = require('hunspell-spellchecker');
-const spellchecker = new SpellChecker();
+let fs = require('fs');
+let path = require('path');
+let SpellChecker = require('hunspell-spellchecker');
+let spellchecker = new SpellChecker();
 
 module.exports = (string) => {
     const DICT = spellchecker.parse({
-        aff: fs.readFileSync('./dictionaryVI/index.aff'),
-        dic: fs.readFileSync('./dictionaryVI/index.dic')
+        aff: fs.readFileSync(path.resolve(__dirname, './index.aff')),
+        dic: fs.readFileSync(path.resolve(__dirname, './index.dic'))
     });
 
     spellchecker.use(DICT);
