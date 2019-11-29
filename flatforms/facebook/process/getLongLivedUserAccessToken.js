@@ -15,9 +15,9 @@ let setOptions = (user_access_token) =>{
         },
     }
 };
-module.exports = (user_access_token,page_id) =>{
+module.exports = (user_access_token) =>{
     return new Promise((resolve,reject)=>{
-        requestPromise(setOptions(user_access_token,page_id)).then((response)=>{
+        requestPromise(setOptions(user_access_token)).then((response)=>{
             return resolve(JSON.parse(response).access_token)
         }).catch((result)=>{
             return reject(result.error);
