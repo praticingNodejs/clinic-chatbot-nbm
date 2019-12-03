@@ -29,7 +29,7 @@ let questions = [
     { id: 7, content: "Lý do khám (triệu chứng)?", index: 2, template_id: 3, name: "getReason" },
     { id: 8, content: "Ngày hẹn? (Ngày - tháng - năm)", index: 3, template_id: 3, name: "getDate" },
     { id: 9, content: "Giờ hẹn? (vd: 15:00 )", index: 4, template_id: 3, name: "getTime" },
-    { id: 10, content: "Cảm ơn đã điền đầy đủ thông tin!!", index: 5, template_id: 3 },
+    { id: 10, content: "Cảm ơn đã điền đầy đủ thông tin!!", index: 5, template_id: 3, name: 'getConfirm' },
 
     { id: 11, content: "Họ tên?", index: 0, template_id: 4, name: "getName" },
     { id: 12, content: "Số điện thoại?", index: 1, template_id: 4, name: "getPhone" },
@@ -178,25 +178,28 @@ let getCategoryByTemplateId = (template_id) => {
     return null;
 };
 
-let messageReply = async(access_token, user_id, category, messageMore) => {
-    let message = '';
+let messageReply = async(message, sender_id, category) => {
     switch (category) {
-        case 'assistant':
-            return;
-        case 'update':
-            message = 'Bạn cập nhật lịch thành công';
-            break;
-        case 'cancel':
-            message = 'Bạn đã hủy lịch hẹn khám thành công';
-            break;
         case 'book':
-            message = 'Bạn đặt lịch hẹn thành công';
+            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Bạn có chắc muốn đặt lịch theo thông tin này không?');
+
+            let user = users[findUser(sender_id)];
+            let book = books[findBook(sender_id)];
+            let raw = `Người khám: ${user.name}. Số điện thoại: ${user.phone}. Lý do khám: ${book.reason}. Thời gian: ${book.time} ${book.date}`;
+            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, raw);
+
+            if (message.text.toLowerCase() === 'có') {
+                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Đặt lịch thành công');
+            } else if (message.text.toLowerCase() === 'không') {
+                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy thành công');
+            } else {
+                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy vì gặp ký tự lạ');
+            }
             break;
         default:
             break;
-
     }
-    await sendTextFacebook(access_token, user_id, message).then().catch();
+    setSession(sender_id, null)
 };
 
 
@@ -274,7 +277,7 @@ module.exports = {
                                 case 'book':
                                     if (currentQuestion.name === 'getName') {
                                         if (message.text.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g) === null) {
-                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Định dạng dữ liệu cho tên bị sai, vui lòng nhập lại!!');
                                             await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                         } else {
                                             console.log(`name: ${message.text}`)
@@ -287,7 +290,7 @@ module.exports = {
 
                                     } else if (currentQuestion.name === 'getPhone') {
                                         if (message.text.match(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/g) === null) {
-                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Định dạng dữ liệu co số điện thoại bị sai, vui lòng nhập lại!!');
                                             await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                         } else {
                                             let phone = message.text;
@@ -307,7 +310,7 @@ module.exports = {
 
                                     } else if (currentQuestion.name === 'getDate') {
                                         if (message.text.match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/g) === null) {
-                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Ngày tháng năm bị sai, vui lòng điền theo định dạng: Ngày - Tháng - Năm (01-01-1999)');
                                             await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                         } else {
                                             let date = message.text;
@@ -317,39 +320,29 @@ module.exports = {
                                         }
                                     } else if (currentQuestion.name === 'getTime') {
                                         if (message.text.match(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/g) === null) {
-                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Thời gian bị sai, vui lòng điền theo định dạng: Giờ:Phút (01:00)');
                                             await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                         } else {
                                             let time = message.text;
-                                            console.log('Gio: ', time)
+                                            console.log('Giờ: ', time)
                                             books[findOrCreateBook(sender_id)].time = time;
                                             setSession(sender_id, question.id);
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+                                            setSession(sender_id, null)
                                         }
-                                    }
 
-                                    if (nextQuestionId === 10) {
-                                        switch (category) {
-                                            case 'book':
-                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Bạn có chắc muốn đặt lịch theo thông tin này không?');
-
-                                                let user = users[findUser(sender_id)];
-                                                let book = books[findBook(sender_id)];
-                                                let raw = `Người khám: ${user.name}. Số điện thoại: ${user.phone}. Lý do khám: ${book.reason}. Thời gian: ${book.time} ${book.date}`;
-                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, raw);
-
-                                                // if (message.text.toLowerCase() === 'có') {
-                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Đặt lịch thành công');
-                                                // } else if (message.text.toLowerCase() === 'không') {
-                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy thành công');
-                                                // } else {
-                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy vì gặp ký tự lạ');
-                                                // }
-                                                break;
-                                        }
+                                        await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Dưới đây là lịch khám của bạn, vui lòng xác nhận thông tin!! Xin cảm ơn !!');
+                                        let user = users[findUser(sender_id)];
+                                        let book = books[findBook(sender_id)];
+                                        let raw = `Người khám: ${user.name}. Số điện thoại: ${user.phone}. Lý do khám: ${book.reason}. Thời gian: ${book.time} ${book.date}`;
+                                        await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, raw);
                                     }
                                     break;
                                 default:
                                     break;
+                            }
+                            if (message.text !== books[findOrCreateBook(sender_id)].time && current_session.question_id === null) {
+                                messageReply(message, sender_id, category)
                             }
                         } else {
                             setSession(sender_id, null);
