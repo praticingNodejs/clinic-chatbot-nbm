@@ -27,14 +27,15 @@ let questions = [
     { id: 5, content: "Họ tên?", index: 0, template_id: 3, name: "getName" },
     { id: 6, content: "Số điện thoại?", index: 1, template_id: 3, name: "getPhone" },
     { id: 7, content: "Lý do khám (triệu chứng)?", index: 2, template_id: 3, name: "getReason" },
-    { id: 8, content: "Ngày hẹn?", index: 3, template_id: 3, name: "getDate" },
-    { id: 9, content: "Giờ hẹn?", index: 4, template_id: 3, name: "getTime" },
+    { id: 8, content: "Ngày hẹn? (Ngày - tháng - năm)", index: 3, template_id: 3, name: "getDate" },
+    { id: 9, content: "Giờ hẹn? (vd: 15:00 )", index: 4, template_id: 3, name: "getTime" },
+    { id: 10, content: "Cảm ơn đã điền đầy đủ thông tin!!", index: 5, template_id: 3 },
 
-    { id: 10, content: "Họ tên?", index: 0, template_id: 4, name: "getName" },
-    { id: 11, content: "Số điện thoại?", index: 1, template_id: 4, name: "getPhone" },
-    { id: 12, content: "Năm sinh", index: 2, template_id: 4 },
-    { id: 13, content: "Giới tính", index: 3, template_id: 4 },
-    { id: 14, content: "Liên hệ 09xxxxxxx", index: 0, template_id: 5 },
+    { id: 11, content: "Họ tên?", index: 0, template_id: 4, name: "getName" },
+    { id: 12, content: "Số điện thoại?", index: 1, template_id: 4, name: "getPhone" },
+    { id: 13, content: "Năm sinh", index: 2, template_id: 4 },
+    { id: 14, content: "Giới tính", index: 3, template_id: 4 },
+    { id: 15, content: "Liên hệ 09xxxxxxx", index: 0, template_id: 5 },
 ];
 
 let templates = [
@@ -49,6 +50,22 @@ let templates = [
 let handlePostbackFacebook = async(user_id, payload) => {
 
 };
+let findOrCreateBook = (user_id) => {
+    console.log(books)
+    let check = -1;
+    for (let i = 0; i < books.length; i++) {
+        if (books[i].user_id == user_id) {
+            check = i
+            return i;
+
+        }
+    }
+    if (check === -1) {
+        books.push({ user_id: user_id, reason: null, date: null, time: null, status: null });
+        console.log(books)
+        return books.length - 1;
+    }
+}
 
 let findUser = (id) => {
     console.log("findUser");
@@ -59,6 +76,14 @@ let findUser = (id) => {
     }
     return -1;
 };
+let findBook = (user_id) => {
+    for (let i = 0; i < books.length; i++) {
+        if (books[i].user_id === user_id) {
+            return i;
+        }
+    }
+    return null;
+}
 
 let getSession = (user_id) => {
     console.log("getSession");
@@ -175,9 +200,6 @@ let messageReply = async(access_token, user_id, category, messageMore) => {
 };
 
 
-
-
-
 module.exports = {
     getWebhook: (req, res, next) => {
         console.log(JSON.stringify(req.body));
@@ -245,13 +267,92 @@ module.exports = {
                         let category = getCategoryByTemplateId(templateId);
                         let nextQuestionId = getNextQuestionId(templateId, current_session.question_id);
                         console.log({ templateId: templateId, category: category, nextQuestionId: nextQuestionId });
+                        let currentQuestion = getQuestion(current_session.question_id);
                         let question = getQuestion(nextQuestionId);
                         if (question !== null) {
-                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
-                            setSession(sender_id, question.id);
+                            switch (category) {
+                                case 'book':
+                                    if (currentQuestion.name === 'getName') {
+                                        if (message.text.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g) === null) {
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
+                                        } else {
+                                            console.log(`name: ${message.text}`)
+                                            name = message.text;
+                                            users[findUser(sender_id)].name = name;
+                                            setSession(sender_id, question.id);
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+
+                                        }
+
+                                    } else if (currentQuestion.name === 'getPhone') {
+                                        if (message.text.match(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/g) === null) {
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
+                                        } else {
+                                            let phone = message.text;
+                                            users[findUser(sender_id)].phone = phone;
+                                            setSession(sender_id, question.id);
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+                                        }
+                                    } else if (currentQuestion.name === 'getReason') {
+
+                                        let reason = message.text;
+                                        console.log(`Reason:   ${reason}`)
+                                        index = findOrCreateBook(sender_id);
+                                        console.log(books[index])
+                                        books[index].reason = reason;
+                                        setSession(sender_id, question.id);
+                                        await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+
+                                    } else if (currentQuestion.name === 'getDate') {
+                                        if (message.text.match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/g) === null) {
+                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
+                                        } else {
+                                            let date = message.text;
+                                            books[findOrCreateBook(sender_id)].date = date;
+                                            setSession(sender_id, question.id);
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+                                        }
+                                    } else if (currentQuestion.name === 'getTime') {
+                                        if (message.text.match(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/g) === null) {
+                                            sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Wrong input type');
+                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
+                                        } else {
+                                            let time = message.text;
+                                            console.log('Gio: ', time)
+                                            books[findOrCreateBook(sender_id)].time = time;
+                                            setSession(sender_id, question.id);
+                                        }
+                                    }
+
+                                    if (nextQuestionId === 10) {
+                                        switch (category) {
+                                            case 'book':
+                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Bạn có chắc muốn đặt lịch theo thông tin này không?');
+
+                                                let user = users[findUser(sender_id)];
+                                                let book = books[findBook(sender_id)];
+                                                let raw = `Người khám: ${user.name}. Số điện thoại: ${user.phone}. Lý do khám: ${book.reason}. Thời gian: ${book.time} ${book.date}`;
+                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, raw);
+
+                                                // if (message.text.toLowerCase() === 'có') {
+                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Đặt lịch thành công');
+                                                // } else if (message.text.toLowerCase() === 'không') {
+                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy thành công');
+                                                // } else {
+                                                //     await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch đã được hủy vì gặp ký tự lạ');
+                                                // }
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
                         } else {
-                            await setSession(sender_id, null);
-                            messageReply(process.env.FB_ACCESS_TOKEN, sender_id, category);
+                            setSession(sender_id, null);
                         }
                     }
                 }
