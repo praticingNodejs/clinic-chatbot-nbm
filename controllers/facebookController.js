@@ -30,8 +30,8 @@ let questions = [
     { id: 6, content: "Để đặt lịch khám, tôi sẽ lấy một vài thông tin của bạn (bạn có thể gõ 'thoát' để dừng việc đăng ký!! Họ tên của bạn là gì?", index: 1, template_id: 3, name: "getName" },
     { id: 7, content: "Số điện thoại của bạn?", index: 2, template_id: 3, name: "getPhone" },
     { id: 8, content: "Lý do khám (triệu chứng)?", index: 3, template_id: 3, name: "getReason" },
-    { id: 9, content: "Ngày hẹn? (Ngày - tháng - năm)", index: 4, template_id: 3, name: "getDate" },
-    { id: 10, content: "Giờ hẹn? (vd: 15:00 )", index: 5, template_id: 3, name: "getTime" },
+    { id: 9, content: "Ngày hẹn? (vd: 01/01/2020)", index: 4, template_id: 3, name: "getDate" },
+    { id: 10, content: "Giờ hẹn? (vd: 00:00 )", index: 5, template_id: 3, name: "getTime" },
     { id: 11, content: "Cảm ơn bạn vì đã điền đầy đủ thông tin!!", index: 6, template_id: 3, name: 'getConfirm' },
 
     { id: 12, content: "Họ tên?", index: 0, template_id: 4, name: "getName" },
@@ -175,6 +175,7 @@ let sessionManager = (user_id, question) => {
         getNextQuestionId(template_id, current_session.question_id);
     }
 };
+
 let getCategoryByTemplateId = (template_id) => {
     for (let i = 0; i < templates.length; i++) {
         if (templates[i].id === template_id) {
@@ -183,6 +184,29 @@ let getCategoryByTemplateId = (template_id) => {
     }
     return null;
 };
+
+let compareDate = (date) => {
+    //get current date
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+
+    today = dd + '/' + yy + '/' + yyyy;
+
+    today = today.split("/");
+    let currentDate = new Date(today[2], today[1], today[0]);
+    date = date.split("/");
+    let scheduleDate = new Date(date[2], date[1], date[0]);
+
+    console.log(`Today: ${today} and Date: ${date}`)
+
+    if (currentDate.getTime() < scheduleDate.getTime()) {
+        return true
+    } else {
+        return false
+    }
+}
 
 module.exports = {
     getWebhook: (req, res, next) => {
@@ -325,21 +349,25 @@ module.exports = {
                                             await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
                                         }
                                     } else if (currentQuestion.name === 'getDate') {
-                                        if (message.text.match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/g) === null) {
+                                        if (message.text.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/g) === null) {
                                             if (message.text.toLowerCase() === 'thoát') {
                                                 books = books.splice(books[findBook(sender_id)], 1);
-
                                                 setSession(sender_id, null);
                                                 await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Việc đăng ký lịch đã được tạm ngừng!! ');
                                             } else {
-                                                sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Ngày tháng năm bị sai, vui lòng điền theo định dạng: Ngày - Tháng - Năm (01-01-1999)');
+                                                sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Ngày tháng năm bị sai, vui lòng điền theo đúng định dạng ngày/tháng/năm');
                                                 await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                             }
                                         } else {
                                             let date = message.text;
-                                            books[findOrCreateBook(sender_id)].date = date;
-                                            setSession(sender_id, question.id);
-                                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+                                            if (compareDate(date) === true) {
+                                                books[findOrCreateBook(sender_id)].date = date;
+                                                setSession(sender_id, question.id);
+                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, question.content);
+                                            } else {
+                                                sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Lịch hiện tại đã vượt qua lịch đặt của bạn, xin vui lòng điền lại ngày hẹn!!');
+                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
+                                            }
                                         }
                                     } else if (currentQuestion.name === 'getTime') {
                                         if (message.text.match(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/g) === null) {
