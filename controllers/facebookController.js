@@ -355,7 +355,7 @@ module.exports = {
                                                 setSession(sender_id, null);
                                                 await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Việc đăng ký lịch đã được tạm ngừng!! ');
                                             } else {
-                                                sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Ngày tháng năm bị sai, vui lòng điền theo đúng định dạng ngày/tháng/năm');
+                                                await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Ngày tháng năm bị sai, vui lòng điền theo đúng định dạng ngày/tháng/năm');
                                                 await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, currentQuestion.content);
                                             }
                                         } else {
