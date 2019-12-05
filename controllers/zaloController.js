@@ -1,26 +1,26 @@
 module.exports = {
-    getCallback:(req,res,next)=>{
+    getCallback: (req, res, next) => {
         console.log(JSON.stringify(req.body));
         res.json({
-            success:true
+            success: true
         });
     },
-    postCallback:(req,res,next)=>{
+    postCallback: (req, res, next) => {
         console.log(JSON.stringify(req.body));
         res.json({
-            success:true
+            success: true
         });
     },
-    getWebhook:(req,res,next)=>{
+    getWebhook: (req, res, next) => {
         console.log(JSON.stringify(req.body));
         res.json({
-            success:true
+            success: true
         });
     },
-    postWebhook:(req,res,next)=>{
+    postWebhook: (req, res, next) => {
         console.log(JSON.stringify(req.body));
         res.json({
-            success:true
+            success: true
         });
     },
 
