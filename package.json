@@ -1,0 +1,38 @@
+{
+  "name": "clinic-chatbot",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon ./bon/www",
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bayes": "0.0.7",
+    "bluebird": "^3.7.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dictionary-vi": "^2.1.1",
+    "dotenv": "^8.2.0",
+    "ejs": "~2.6.1",
+    "express": "^4.16.4",
+    "http-errors": "^1.7.3",
+    "hunspell-spellchecker": "^1.0.2",
+    "morgan": "^1.9.1",
+    "nodemon": "^2.0.0",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "pg": "^7.14.0",
+    "pg-hstore": "^2.3.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
+    "sequelize": "^5.21.2"
+  },
+  "main": "app.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
