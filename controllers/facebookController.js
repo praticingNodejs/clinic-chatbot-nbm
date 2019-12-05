@@ -30,8 +30,8 @@ let questions = [
     { id: 6, content: "Để đặt lịch khám, tôi sẽ lấy một vài thông tin của bạn (bạn có thể gõ 'thoát' để dừng việc đăng ký!! Họ tên của bạn là gì?", index: 1, template_id: 3, name: "getName" },
     { id: 7, content: "Số điện thoại của bạn?", index: 2, template_id: 3, name: "getPhone" },
     { id: 8, content: "Lý do khám (triệu chứng)?", index: 3, template_id: 3, name: "getReason" },
-    { id: 9, content: "Ngày hẹn? (vd: 01/01/2020)", index: 4, template_id: 3, name: "getDate" },
-    { id: 10, content: "Giờ hẹn? (vd: 00:00 )", index: 5, template_id: 3, name: "getTime" },
+    { id: 9, content: "Ngày hẹn? (Định dạng ngày/tháng/năm, vd: 01/01/2020)", index: 4, template_id: 3, name: "getDate" },
+    { id: 10, content: "Giờ hẹn? (Định dạng giờ:phút, vd: 00:00)", index: 5, template_id: 3, name: "getTime" },
     { id: 11, content: "Cảm ơn bạn vì đã điền đầy đủ thông tin!!", index: 6, template_id: 3, name: 'getConfirm' },
 
     { id: 12, content: "Họ tên?", index: 0, template_id: 4, name: "getName" },
@@ -192,7 +192,7 @@ let compareDate = (date) => {
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
 
-    today = dd + '/' + yy + '/' + yyyy;
+    today = dd + '/' + mm + '/' + yyyy;
 
     today = today.split("/");
     let currentDate = new Date(today[2], today[1], today[0]);
