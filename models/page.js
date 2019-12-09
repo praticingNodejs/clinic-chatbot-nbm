@@ -23,9 +23,9 @@ const Page = sequelize.define('pages', {
         type: Sequelize.STRING,
         field: 'access_token'
     },
-    customerId:{
-        type:Sequelize.INTEGER,
-        field:'customer_id'
+    customerId: {
+        type: Sequelize.INTEGER,
+        field: 'customer_id'
     }
 }, {
     timestamps: false,

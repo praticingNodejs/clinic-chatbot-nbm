@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
-    
+
     <script>
         let data = null;
-        let sendData = (data) =>{
-            return new Promise((resolve,reject)=>{
+        let sendData = (data) => {
+            return new Promise((resolve, reject) => {
                 $.ajax({
                     method: "POST",
                     url: "/api/data",
                     data: data,
-                    success:function(response){
+                    success: function(response) {
                         //console.log(response);
                         return resolve(response);
                     },
@@ -30,19 +31,20 @@
 
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '482398842361101',
-                cookie     : true,
-                xfbml      : true,
-                version    : 'v5.0'
+                appId: '482398842361101',
+                cookie: true,
+                xfbml: true,
+                version: 'v5.0'
             });
             FB.AppEvents.logPageView();
         };
+
         function checkLoginState() {
             FB.getLoginStatus(function(response) {
                 statusChangeCallback(response);
             });
         };
-        async function statusChangeCallback(response){
+        async function statusChangeCallback(response) {
             console.log('statusChangeCallback');
             console.log(response);
 
@@ -53,9 +55,13 @@
             if (response.status === 'connected') {
                 // Logged into your app and Facebook.
                 data = response;
-                await sendData(response).then(()=>{console.log('send')}).catch(()=>{console.log('error')})
+                await sendData(response).then(() => {
+                    console.log('send')
+                }).catch(() => {
+                    console.log('error')
+                })
                 console.log('Welcome!  Fetching your information.... ');
-                FB.api('/me', async function  (response) {
+                FB.api('/me', async function(response) {
 
                     console.log('Successful login for: ' + response.name);
                     document.getElementById('status').innerHTML =
@@ -67,21 +73,23 @@
                     'into this app.';
             }
         }
-        (function(d, s, id){
+        (function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
             js.src = "https://connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
     </script>
 </head>
+
 <body>
     <h1 id="status">@@</h1>
-<fb:login-button
-        scope="public_profile,email,pages_messaging,publish_pages,manage_pages"
-        onlogin="checkLoginState();">
-</fb:login-button>
+    <fb:login-button scope="public_profile,email,pages_messaging,publish_pages,manage_pages" onlogin="checkLoginState();">
+    </fb:login-button>
 </body>
-</html>
 
+</html>

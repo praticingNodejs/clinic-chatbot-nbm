@@ -1,39 +1,48 @@
 let sendTextFacebook = require('../process/sendTextFacebook');
-module.exports =async (page_id,user_id,payload)=> {
+module.exports = async(page_id, user_id, payload) => {
     let category = payload.category;
     switch (category) {
-        case 'bookSchedule':{
-            break;
-        }
-        case 'updateSchedule':{
-            break;
-        }
-        case 'cancelSchedule':{
-            break;
-        }
-        case 'readSchedule':{
+        case 'bookSchedule':
+            {
+                break;
+            }
+        case 'updateSchedule':
+            {
+                break;
+            }
+        case 'cancelSchedule':
+            {
+                break;
+            }
+        case 'readSchedule':
+            {
 
-            break;
-        }
-        case 'updateProfile':{
+                break;
+            }
+        case 'updateProfile':
+            {
 
-            break;
-        }
-        case 'deleteProfile':{
+                break;
+            }
+        case 'deleteProfile':
+            {
 
-            break;
-        }
-        case 'readProfile':{
+                break;
+            }
+        case 'readProfile':
+            {
 
-            break;
-        }
-        case 'assistant':{
+                break;
+            }
+        case 'assistant':
+            {
 
-            break;
-        }
-        default:{
+                break;
+            }
+        default:
+            {
 
-            break;
-        }
+                break;
+            }
     }
 };

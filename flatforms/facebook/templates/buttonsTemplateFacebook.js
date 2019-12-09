@@ -1,9 +1,9 @@
-module.exports = (text,buttons) =>{
+module.exports = (text, buttons) => {
     return {
-        payload:{
+        payload: {
             template_type: 'button',
-            text : text,
-            buttons : buttons
+            text: text,
+            buttons: buttons
         }
     }
 };

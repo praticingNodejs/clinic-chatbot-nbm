@@ -10,7 +10,7 @@ const Book = sequelize.define('books', {
     status: {
         type: Sequelize.STRING,
         defaultValue: 'pending',
-        values: ['pending', 'verified','canceled'],
+        values: ['pending', 'verified', 'canceled'],
         field: 'status'
     },
     time: {
@@ -25,9 +25,9 @@ const Book = sequelize.define('books', {
         type: Sequelize.STRING,
         field: 'reason'
     },
-    userId:{
-        type:Sequelize.INTEGER,
-        field:'user_id'
+    userId: {
+        type: Sequelize.INTEGER,
+        field: 'user_id'
     }
 }, {
     timestamps: false,

@@ -13,20 +13,20 @@ module.exports = (string) => {
 
     let resMessage = string.split(" ");
 
-    for(let i = 0; i < resMessage.length; i++) {
+    for (let i = 0; i < resMessage.length; i++) {
 
         //syntax != number
-        if(isNaN(resMessage[i])) {
-            if(!spellchecker.check(resMessage[i])) {
+        if (isNaN(resMessage[i])) {
+            if (!spellchecker.check(resMessage[i])) {
                 return false
             }
-            if(i == resMessage.length - 1) {
-                if(spellchecker.check(resMessage[i])) {
+            if (i == resMessage.length - 1) {
+                if (spellchecker.check(resMessage[i])) {
                     return true
                 }
             }
         } else {
-            if(i == resMessage.length - 1) {
+            if (i == resMessage.length - 1) {
                 return true
             }
         }

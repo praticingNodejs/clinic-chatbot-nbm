@@ -27,7 +27,7 @@ let questions = [
     { id: 4, content: "Bạn chắc chắn muốn hủy lịch hẹn?", index: 0, template_id: 2 },
 
     { id: 5, content: "Ý bạn là đặt lịch có phải không? ('có' hoặc 'không')", index: 0, template_id: 3, name: "confirm" },
-    { id: 6, content: "Để đặt lịch khám, tôi sẽ lấy một vài thông tin của bạn (bạn có thể gõ 'thoát' để dừng việc đăng ký!! Họ tên của bạn là gì?", index: 1, template_id: 3, name: "getName" },
+    { id: 6, content: "Để đặt lịch khám, tôi sẽ lấy một vài thông tin của bạn (bạn có thể gõ 'thoát' để dừng việc đăng ký)!! Họ tên của bạn là gì?", index: 1, template_id: 3, name: "getName" },
     { id: 7, content: "Số điện thoại của bạn?", index: 2, template_id: 3, name: "getPhone" },
     { id: 8, content: "Lý do khám (triệu chứng)?", index: 3, template_id: 3, name: "getReason" },
     { id: 9, content: "Ngày hẹn? (Định dạng ngày/tháng/năm, vd: 01/01/2020)", index: 4, template_id: 3, name: "getDate" },
@@ -82,6 +82,7 @@ let findUser = (id) => {
     }
     return -1;
 };
+
 let findBook = (user_id) => {
     for (let i = 0; i < books.length; i++) {
         if (books[i].user_id === user_id) {
@@ -262,7 +263,7 @@ module.exports = {
                         let category = classifier(text);
                         console.log(category);
                         if (category === null || category === undefined) {
-                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Tôi không hiểu, bạn có thể nói rõ hơn được không?');
+                            await sendTextFacebook(process.env.FB_ACCESS_TOKEN, sender_id, 'Để tránh bị nhầm lẫn, các câu nói nên được viết là tiếng việt có dấu và không có dấu câu ở cuối cùng. Bạn có thể nói lại được không?');
                         } else {
                             let templateId = getTemplateIdByCategory(category);
                             let questionsOfTemplate = getQuestionsOfTemplate(templateId);

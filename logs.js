@@ -1,14 +1,14 @@
-module.exports = (task,success,error)=>{
-    if(success){
+module.exports = (task, success, error) => {
+    if (success) {
         console.log({
-            task:task,
-            success:success
+            task: task,
+            success: success
         })
-    }else{
+    } else {
         console.log({
             task: task,
             success: success,
-            error:error
+            error: error
         })
     }
 };
